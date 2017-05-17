@@ -18,15 +18,15 @@ def GetRandomIndexForMusicFile (filesArray):
 
 def GetAdhanFile(prayer):
       fileName =""
-      if prayer =="FAJR":
+      if prayer =="Fajr":
          for root, dirs, files in os.walk('media/fajr',topdown=True):
                   fileName = GetRandomIndexForMusicFile(files)
-                  return fileName
+                  return root+"/"+fileName
       else:
             #pick a random mp3 from the folder
             for root, dirs, files in os.walk('media',topdown=True):
                   fileName = GetRandomIndexForMusicFile(files)
-                  return fileName              
+                  return root+"/"+fileName              
 
 
 def GetLatestPrayerTimes():
@@ -79,7 +79,7 @@ while True:
                                   adhanPlayed[prayer] =True
                                   pygame.mixer.init()
                                   fileName = GetAdhanFile(prayer)
-                                  pygame.mixer.music.load("media/a1.mp3")
+                                  pygame.mixer.music.load(fileName)
                                   pygame.mixer.music.play()
                                   while pygame.mixer.music.get_busy() == True:
                                     continue
