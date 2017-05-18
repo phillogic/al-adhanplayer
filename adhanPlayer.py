@@ -79,6 +79,7 @@ while True:
                                   adhanPlayed[prayer] =True
                                   pygame.mixer.init()
                                   fileName = GetAdhanFile(prayer)
+                                  print "playing adhan " + fileName
                                   pygame.mixer.music.load(fileName)
                                   pygame.mixer.music.play()
                                   while pygame.mixer.music.get_busy() == True:
