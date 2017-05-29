@@ -13,4 +13,4 @@ pipelines:
           - ls -lh
           - export PYTHONPATH="$PYTHONPATH:."
           - cd test
-          - python -m unittest AdhanPlayerTest.py
+          - python  test/AdhanPlayerTest.py
