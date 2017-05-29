@@ -1,20 +1,26 @@
 import unittest
+import os
+import sys
+
 from player import adhanPlayer
 class TestAdhanPlayerMethods(unittest.TestCase):
+    
+    def test_GetAdhanFile(self):
+       fajr =  adhanPlayer.GetAdhanFile("Fajr")
+       #print fajr
+       self.assertIsNotNone(fajr)
+       asr =  adhanPlayer.GetAdhanFile("Asr")
+       #print asr
+       self.assertIsNotNone(asr)
 
-    def test_upper(self):
-        self.assertEqual('foo'.upper(), 'FOO')
-
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
-
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
+    def test_StripUnwantedFilesFromArray_In_MediaFolder(self):
+        
+        for root, dirs, files in os.walk('media',topdown=True):
+                  #print files
+                  #print "files after strip :", adhanPlayer.StripUnwantedFilesFromArray(files)
+                  fArray = adhanPlayer.StripUnwantedFilesFromArray(files)
+                  for f in fArray:
+                      self.assertNotEqual(f[0],'.')
 
 if __name__ == '__main__':
     unittest.main()

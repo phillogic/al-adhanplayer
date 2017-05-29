@@ -5,16 +5,19 @@ import pygame
 import os
 import random
 
-
+def StripUnwantedFilesFromArray(filesArray):
+    #removes any file starting with '.'
+    newArray = []
+    for f in filesArray :
+        if f[0] != "." :
+            newArray.append(f)
+    return newArray              
 
 def GetRandomIndexForMusicFile (filesArray):
+      filesArray= StripUnwantedFilesFromArray (filesArray)
       randomFileIndexFromFilesArray =  random.randint(0,len(filesArray) -1 )
-      if  filesArray[randomFileIndexFromFilesArray] == ".":     
-            #this is a hidden file , skip it and find a new index
-             GetRandomIndexForMusicFile(filesArray)
-      else:
-          #valid music file
-          return  filesArray[randomFileIndexFromFilesArray]     
+       #valid music file
+      return  filesArray[randomFileIndexFromFilesArray]     
 
 def GetAdhanFile(prayer):
       fileName =""
