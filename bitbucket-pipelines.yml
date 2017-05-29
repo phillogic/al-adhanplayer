@@ -12,4 +12,5 @@ pipelines:
           - pip install -r requirements.txt
           - ls -lh
           - export PYTHONPATH="$PYTHONPATH:."
-          - python -m unittest test/AdhanPlayerTest.py
+          - cd test
+          - python -m unittest AdhanPlayerTest.py
