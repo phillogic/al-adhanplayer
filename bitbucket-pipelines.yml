@@ -10,4 +10,6 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - pip install -r requirements.txt
+          - ls -lh
+          - export PYTHONPATH="$PYTHONPATH:."
           - python -m unittest test/AdhanPlayerTest.py
