@@ -4,6 +4,12 @@ import requests
 import pygame
 import os
 import random
+import logging
+from utils import adhanLogger
+
+
+#setting up logger with default from LabLogger
+playerLogger= adhanLogger.logging.getLogger(__file__)
 
 def StripUnwantedFilesFromArray(filesArray):
     #removes any file starting with '.'
@@ -24,32 +30,40 @@ def GetAdhanFile(prayer):
       if prayer =="Fajr":
          for root, dirs, files in os.walk('media/fajr',topdown=True):
                   fileName = GetRandomIndexForMusicFile(files)
+                  playerLogger.info("Playing fajr adhan: {}".format(fileName))
                   return root+"/"+fileName
       else:
             #pick a random mp3 from the folder
             for root, dirs, files in os.walk('media',topdown=True):
                   fileName = GetRandomIndexForMusicFile(files)
+                  playerLogger.info("Playing adhan file: {}".format(fileName))
                   return root+"/"+fileName              
 
 
 def GetLatestPrayerTimes():
-      r = requests.get('http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1')
-      dataset = r.json()
-      prayerTimings = dataset["data"]["timings"]
-      #removing renudant timings
-      prayerTimings.pop('Midnight',None)
-      prayerTimings.pop('Sunset',None)
-      prayerTimings.pop('Sunrise',None)
-      prayerTimings.pop('Imsak',None)
-      
-      
-      print prayerTimings
-      pryayerAdhanPlayed =  {}
-      for p in prayerTimings:
-        pryayerAdhanPlayed[p] = False
+      playerLogger.debug("GetLatestPrayerTimes: making request http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1")
+      try:
+            r = requests.get('http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1')
+            dataset = r.json()
+            playerLogger.debug("GetLatestPrayerTimes: response received : {} ".format(r.json()))
+            prayerTimings = dataset["data"]["timings"]
+            #removing renudant timings
+            prayerTimings.pop('Midnight',None)
+            prayerTimings.pop('Sunset',None)
+            prayerTimings.pop('Sunrise',None)
+            prayerTimings.pop('Imsak',None)
+            
+            
+            print prayerTimings
+            pryayerAdhanPlayed =  {}
+            for p in prayerTimings:
+                pryayerAdhanPlayed[p] = False
 
-      ts = datetime.datetime.fromtimestamp(
-      int(dataset["data"]["date"]["timestamp"]))
+            ts = datetime.datetime.fromtimestamp(
+            int(dataset["data"]["date"]["timestamp"]))
+      except Exception as err:
+          playerLogger.error("GetLatestPrayerTimes: Error with getting  request http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1: {}".format(err))
+
       return (ts, prayerTimings,pryayerAdhanPlayed)
 
 
@@ -60,43 +74,47 @@ adhanPlayed = {}
 if __name__ == '__main__':
     while True:
         if timestamp :
-            print "we already have prayer timeings"
+            playerLogger.debug( "main:we already have prayer timeings")
             currentTime  = datetime.datetime.now()
-            print  "The time right now is : " , currentTime
+            playerLogger.debug( "main:currentTime: {}".format( currentTime))
             if timestamp.date() < currentTime.date():
-                print "timestamp has expired. get latest "
-                timestamp, prayerTimes, adhanPlayed  =GetLatestPrayerTimes()
+                playerLogger.debug( "main:timestamp has expired. getting latest prayer times ")
+                timestamp, prayerTimes, adhanPlayed  = GetLatestPrayerTimes()
             else:
                 #timestamp is valid now to check prayer timings
-                print "checking prayer timing match"
+                playerLogger.debug( "main:checking prayer timing match")
                 for prayer in prayerTimes :
                         
                         prayerHour = (int)(prayerTimes[prayer].split(':')[0])
                         if prayerHour == currentTime.hour and adhanPlayed[prayer] ==False: 
                             #found a prayer with the matching hour:
-                            print "found matching hour for "  , prayer
+                            playerLogger.info( "main:found matching hour for {}".format( prayer))
                             #now check if its actually prayer time or within a few minutes of it?
                             prayerMinutes  = (int)(prayerTimes[prayer].split(':')[1])
                             if  prayerMinutes - currentTime.minute <=0 and prayerMinutes - currentTime.minute >= -2:
                                     #play adhan
-                                    print "playing adhan for " , prayer
+                                    playerLogger.info( "main: initializing player adhan for {}".format( prayer))
                                     adhanPlayed[prayer] =True
-                                    pygame.mixer.init()
-                                    fileName = GetAdhanFile(prayer)
-                                    print "playing adhan " + fileName
-                                    pygame.mixer.music.load(fileName)
-                                    pygame.mixer.music.play()
-                                    while pygame.mixer.music.get_busy() == True:
-                                        continue
-                                    pass
+                                    try:
+                                            pygame.mixer.init()
+                                            fileName = GetAdhanFile(prayer)
+                                            playerLogger.info( "main:Playing adhan file {}".format(fileName))
+                                            pygame.mixer.music.load(fileName)
+                                            pygame.mixer.music.play()
+                                            while pygame.mixer.music.get_busy() == True:
+                                                continue
+                                            pass
+                                    except Exception as err:
+                                        playerLogger.error("main: error in playing file {}".format(err))
+
                         else:
                             #adhan has already prayer for this prayer
                             pass
-                print "No prayer time match has occured. Sleeping 30 seconds"
+                playerLogger.info( "main: No prayer time match has occured. Sleeping 30 seconds")
                 time.sleep(30)   
         else:
-                print " no prayer timing so far"
+                playerLogger.info( "main: No prayer timing so far")
                 timestamp, prayerTimes, adhanPlayed =GetLatestPrayerTimes()
-                print "Prayer Timings were refreshed on: " , timestamp 
+                playerLogger.info( "main: Prayer Timings were refreshed on: {}".format( timestamp ))
             
 
