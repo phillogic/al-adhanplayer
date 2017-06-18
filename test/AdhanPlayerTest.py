@@ -1,8 +1,7 @@
 import unittest
 import os
 import sys
-
-from player import adhanPlayer
+import adhanPlayer
 class TestAdhanPlayerMethods(unittest.TestCase):
     
     def test_GetAdhanFile(self):
