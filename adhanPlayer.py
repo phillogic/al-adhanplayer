@@ -30,13 +30,13 @@ def GetAdhanFile(prayer):
       if prayer =="Fajr":
          for root, dirs, files in os.walk('media/fajr',topdown=True):
                   fileName = GetRandomIndexForMusicFile(files)
-                  playerLogger.info("Playing fajr adhan: {}".format(fileName))
+                  playerLogger.info("GetAdhanFile:Getting fajr adhan: {}".format(fileName))
                   return root+"/"+fileName
       else:
             #pick a random mp3 from the folder
             for root, dirs, files in os.walk('media',topdown=True):
                   fileName = GetRandomIndexForMusicFile(files)
-                  playerLogger.info("Playing adhan file: {}".format(fileName))
+                  playerLogger.info("GetAdhanFile:Getting adhan file: {}".format(fileName))
                   return root+"/"+fileName              
 
 
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                                     try:
                                             pygame.mixer.init()
                                             fileName = GetAdhanFile(prayer)
-                                            playerLogger.info( "main:Playing adhan file {}".format(fileName))
+                                            playerLogger.info( "main:Playing adhan file {} for prayer {}".format(fileName,prayer))
                                             pygame.mixer.music.load(fileName)
                                             pygame.mixer.music.play()
                                             while pygame.mixer.music.get_busy() == True:
