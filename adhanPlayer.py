@@ -110,7 +110,7 @@ if __name__ == '__main__':
                         else:
                             #adhan has already prayer for this prayer
                             pass
-                playerLogger.info( "main: No prayer time match has occured. Sleeping 30 seconds")
+                playerLogger.info( "main: No prayer time match has occured. Sleeping 60 seconds")
                 time.sleep(60)   
         else:
                 playerLogger.info( "main: No prayer timing so far")
