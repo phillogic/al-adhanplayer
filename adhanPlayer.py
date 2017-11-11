@@ -111,7 +111,7 @@ if __name__ == '__main__':
                             #adhan has already prayer for this prayer
                             pass
                 playerLogger.info( "main: No prayer time match has occured. Sleeping 30 seconds")
-                time.sleep(30)   
+                time.sleep(60)   
         else:
                 playerLogger.info( "main: No prayer timing so far")
                 timestamp, prayerTimes, adhanPlayed =GetLatestPrayerTimes()
