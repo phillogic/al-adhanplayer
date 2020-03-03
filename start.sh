@@ -1,3 +1,3 @@
 #!/bin/bash
 
-nohup python /home/pi/Development/al-adhanplayer/adhanPlayer.py &
+nohup python ./adhanPlayer.py &
