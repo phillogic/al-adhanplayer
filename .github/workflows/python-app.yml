@@ -1,4 +1,4 @@
-name: Test run v2
+name: aldhan test and deploy
 
 on:
   workflow_dispatch:
