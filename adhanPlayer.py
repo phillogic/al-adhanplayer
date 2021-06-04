@@ -5,7 +5,7 @@ import pygame
 import os
 import random
 import logging
-from utils import adhanLogger
+import utils.adhanLogger as adhanLogger
 
 
 #setting up logger with default from LabLogger
@@ -57,7 +57,7 @@ def GetLatestPrayerTimes():
             prayerTimings.pop('Imsak',None)
             
             
-            print prayerTimings
+            print (prayerTimings)
             pryayerAdhanPlayed =  {}
             for p in prayerTimings:
                 pryayerAdhanPlayed[p] = False
