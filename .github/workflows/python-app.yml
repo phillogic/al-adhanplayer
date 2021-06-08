@@ -50,5 +50,5 @@ jobs:
        run: |
           pwd
           ls -lh
-          ps -ef | grep  "python ./adhanPlayer.py" | grep -v "grep" | awk '{print $2}' | xargs kill
+          ps -ef | grep  "python ./adhanPlayer.py" | grep -v "grep" | awk '{print $2}' | xargs -r kill
           ./start.sh
