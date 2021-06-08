@@ -1,0 +1,24 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+
+jobs:
+  deploy:
+     runs-on: self-hosted
+     steps:
+     - uses: actions/checkout@v2
+     - name: "Run code"
+       run: |
+          pwd
+          ls -lh
+          ps -ef | grep  "python3 ./adhanPlayer.py"
+          ps -ef | grep  "python3 ./adhanPlayer.py" | grep -v "grep" | awk '{print $2}' | xargs -r kill
+          nohup
+          nohup python3 ./adhanPlayer.py > nohup.out &
+          sleep 5
