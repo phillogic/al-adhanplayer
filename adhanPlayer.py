@@ -6,7 +6,7 @@ import os
 import random
 import logging
 import utils.adhanLogger as adhanLogger
-
+from prometheus_client import start_http_server, Summary,Counter,Gauge
 
 #setting up logger with default from LabLogger
 playerLogger= adhanLogger.logging.getLogger(__file__)
@@ -40,6 +40,9 @@ def GetAdhanFile(prayer):
                   return root+"/"+fileName              
 
 
+GetLatestPrayerTimes_REQUEST_TIME = Summary('adhan_player_GetLatestPrayerTimes_processing_seconds', 'Time spent processing request for GetLatestPrayerTimes')
+
+@GetLatestPrayerTimes_REQUEST_TIME.time()
 def GetLatestPrayerTimes():
       playerLogger.debug("GetLatestPrayerTimes: making request http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1")
       ts =None
@@ -74,8 +77,13 @@ timestamp = None
 pryayerTimes = None
 adhanPlayed = {}
 
+
+loop_counter = Counter('adhan_player_loop_counter', 'Description of counter')
+
 if __name__ == '__main__':
+    start_http_server(8000)
     while True:
+        loop_counter.inc()
         if timestamp :
             playerLogger.debug( "main:we already have prayer timeings")
             currentTime  = datetime.datetime.now()
