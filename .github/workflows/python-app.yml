@@ -37,3 +37,10 @@ jobs:
       run: |
         export PYTHONPATH="$PYTHONPATH:."
         python test/AdhanPlayerTest.py
+  deploy:
+     runs-on: self-hosted
+     steps:
+     - name: "Run code"
+       run: |
+          pwd
+          ls -lh
