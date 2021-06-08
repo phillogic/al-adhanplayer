@@ -51,7 +51,6 @@ jobs:
           pwd
           ls -lh
           ps -ef | grep  "python ./adhanPlayer.py" | grep -v "grep"
-          echo "killing any currently running executions"
           ps -ef | grep  "python ./adhanPlayer.py" | grep -v "grep" | awk '{print $2}' | xargs -r kill
-          echo "starting no hup process"
           nohup python3 ./adhanPlayer.py &
+          sleep 5
