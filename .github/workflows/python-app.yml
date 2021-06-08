@@ -50,7 +50,7 @@ jobs:
        run: |
           pwd
           ls -lh
-          ps -ef | grep  "python3 ./adhanPlayer.py"
-          ps -ef | grep  "python3 ./adhanPlayer.py" | grep -v "grep" | awk '{print $2}' | xargs -r kill
-          nohup python3 ./adhanPlayer.py > nohup.out &
-          sleep 5
+          cd ..
+          cp -fr al-adhanplayer /home/pi/Development/
+          cd /home/pi/Development/al-adhanplayer
+          git status
