@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM ubuntu:latest
 RUN mkdir /adhanplayer
 WORKDIR /adhanplayer
 COPY requirements.txt /adhanplayer
