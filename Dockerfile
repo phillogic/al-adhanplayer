@@ -5,5 +5,5 @@ COPY requirements.txt /adhanplayer
 COPY adhanPlayer.py /adhanplayer
 ADD utils /adhanplayer/utils
 ADD media /adhanplayer/media
-RUN pip install -r requirements.txt 
-CMD ["python" , "./adhanPlayer.py"]
+RUN pip3 install -r requirements.txt 
+CMD ["python3" , "./adhanPlayer.py"]
