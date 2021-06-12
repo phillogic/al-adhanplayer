@@ -45,12 +45,17 @@ jobs:
      - name: Build docker image
        run: |
          sudo docker images
+         sudo docker stop adhanplayer 2>/dev/null
+         sudo dokcer build -t adhanplayer:latest .
+         sudo docker images
+         sudo docker run -d --name adhanplayer -p 8000:8000 --device /dev/snd adhanplayer:latest
+         sudo docker system prune -a -f
      - name: Install dependencies
        run: |
         whoami
         python3 -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip3 install -r requirements.txt --user; fi
-     - name: "Run code"
+     - name: "copy code"
        run: |
           pwd
           ls -lh
