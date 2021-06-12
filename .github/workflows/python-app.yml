@@ -45,7 +45,7 @@ jobs:
      - name: Build docker image
        run: |
          sudo docker images
-         sudo docker stop adhanplayer 2>/dev/null
+         sudo docker stop adhanplayer || true
          sudo dokcer build -t adhanplayer:latest .
          sudo docker images
          sudo docker run -d --name adhanplayer -p 8000:8000 --device /dev/snd adhanplayer:latest
