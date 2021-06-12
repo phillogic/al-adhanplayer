@@ -46,7 +46,7 @@ jobs:
        run: |
          sudo docker images
          sudo docker stop adhanplayer || true
-         sudo dokcer build -t adhanplayer:latest .
+         sudo docker build -t adhanplayer:latest .
          sudo docker images
          sudo docker run -d --name adhanplayer -p 8000:8000 --device /dev/snd adhanplayer:latest
          sudo docker system prune -a -f
