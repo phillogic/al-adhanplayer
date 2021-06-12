@@ -1,7 +1,6 @@
 FROM ubuntu:18.04
 ENV TZ=Australia/Sydney
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt-get install -y tzdata
 RUN mkdir /adhanplayer
 WORKDIR /adhanplayer
 COPY requirements.txt /adhanplayer
@@ -9,6 +8,7 @@ COPY adhanPlayer.py /adhanplayer
 ADD utils /adhanplayer/utils
 ADD media /adhanplayer/media
 RUN apt-get update
+RUN apt-get install -y tzdata
 RUN apt-get install -y alsa-base alsa-utils
 RUN apt-get install -y software-properties-common 
 RUN add-apt-repository -y ppa:deadsnakes/ppa
