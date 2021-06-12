@@ -1,7 +1,7 @@
 import datetime
 import time
 import requests
-import pygame
+import vlc
 import os
 import random
 import logging
@@ -107,12 +107,12 @@ if __name__ == '__main__':
                                     playerLogger.info( "main: initializing player adhan for {}".format( prayer))
                                     adhanPlayed[prayer] =True
                                     try:
-                                            pygame.mixer.init()
+                                            
                                             fileName = GetAdhanFile(prayer)
                                             playerLogger.info( "main:Playing adhan file {} for prayer {}".format(fileName,prayer))
-                                            pygame.mixer.music.load(fileName)
-                                            pygame.mixer.music.play()
-                                            while pygame.mixer.music.get_busy() == True:
+                                            vlcplayer = vlc.MediaPlayer(fileName)
+                                            vlcplayer.play()
+                                            while vlcplayer.is_playing == True:
                                                 continue
                                             pass
                                     except Exception as err:
@@ -125,7 +125,7 @@ if __name__ == '__main__':
                 time.sleep(60)   
         else:
                 playerLogger.info( "main: No prayer timing so far")
-                timestamp, prayerTimes, adhanPlayed =GetLatestPrayerTimes()
+                timestamp, prayerTimes, adhanPlayed = GetLatestPrayerTimes()
                 playerLogger.info( "main: Prayer Timings were refreshed on: {}".format( timestamp ))
             
 
