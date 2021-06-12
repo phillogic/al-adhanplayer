@@ -1,6 +1,7 @@
 FROM ubuntu:18.04
 ENV TZ=Australia/Sydney
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get install -y tzdata
 RUN mkdir /adhanplayer
 WORKDIR /adhanplayer
 COPY requirements.txt /adhanplayer
