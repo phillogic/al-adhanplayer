@@ -42,14 +42,24 @@ jobs:
      runs-on: self-hosted
      steps:
      - uses: actions/checkout@v2
-     - name: Build docker image
+     
+     - name: Stopping docker adhanplayer docker container
        run: |
          sudo docker images
          sudo docker stop adhanplayer || true
+         
+     - name: Building adhanplayer docker image
+       run: |
          sudo docker build -t adhanplayer:latest .
          sudo docker images
+         
+     - name: Starting up docker adhanplayer docker container
+       run: |
          sudo docker run -d --name adhanplayer -p 8000:8000 --device /dev/snd adhanplayer:latest
-         sudo docker system prune -a -f
+         
+     - name: Docker system prune
+       run: sudo docker system prune -a -f
+         
      - name: Install dependencies
        run: |
         whoami
