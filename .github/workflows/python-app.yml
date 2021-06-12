@@ -47,6 +47,7 @@ jobs:
        run: |
          sudo docker images
          sudo docker stop adhanplayer || true
+         sudo docker rm -f adhanplayer || true
          
      - name: Building adhanplayer docker image
        run: |
