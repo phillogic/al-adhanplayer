@@ -38,7 +38,7 @@ jobs:
       uses: docker/build-push-action@v2.5.0
       with:
         # List of extra privileged entitlement (eg. network.host,security.insecure)
-        tags: phillogic/adhanplayer:latest phillogic/adhanplayer:${{GITHUB_JOB}}
+        tags: phillogic/adhanplayer:latest phillogic/adhanplayer:${{env.GITHUB_JOB}}
         push: true
         # List of build-time variables
         platforms: linux/arm/v7,linux/arm64
