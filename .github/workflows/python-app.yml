@@ -75,7 +75,7 @@ jobs:
          sudo docker images
          sudo docker stop adhanplayer || true
          sudo docker rm -f adhanplayer || true
-     - name: pullinh docker image from docker hub
+     - name: pulling docker image from docker hub
        run: |
          sudo docker pull phillogic/adhanplayer:latest
          sudo docker images     
