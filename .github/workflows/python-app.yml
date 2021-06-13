@@ -60,7 +60,7 @@ jobs:
      - name: Build and push Docker images
        uses: docker/build-push-action@v2.5.0
        with:
-          tags: phillogic/adhanplayer:latest, phillogic/adhanplayer:${{github.GITHUB_JOB}}
+          tags: phillogic/adhanplayer:latest, phillogic/adhanplayer:${{github.job}}
           push: true
           platforms: linux/arm/v7,linux/arm64
  
