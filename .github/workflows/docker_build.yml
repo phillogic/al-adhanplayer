@@ -64,25 +64,3 @@ jobs:
           push: true
           platforms: linux/arm/v7,linux/arm64
  
-  deploy:
-     needs: build
-     runs-on: self-hosted
-     steps:
-     - uses: actions/checkout@v2
-     
-     - name: Stopping docker adhanplayer docker container
-       run: |
-         sudo docker images
-         sudo docker stop adhanplayer || true
-         sudo docker rm -f adhanplayer || true
-     - name: pulling docker image from docker hub
-       run: |
-         sudo docker pull phillogic/adhanplayer:latest
-         sudo docker images     
-         
-     - name: Starting up docker adhanplayer docker container
-       run: |
-         sudo docker run -d --name adhanplayer -p 8000:8000 --device /dev/snd phillogic/adhanplayer:latest
-         
-     - name: Docker system prune
-       run: sudo docker system prune -a -f
