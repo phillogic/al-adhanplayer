@@ -8,9 +8,6 @@ on:
   workflow_dispatch:
   push:
     paths-ignore: '**/workflows/hacks/*.yml'
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   test:
