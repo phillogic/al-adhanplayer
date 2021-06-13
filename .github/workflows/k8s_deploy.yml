@@ -7,6 +7,7 @@ on:
       - '**/workflows/manual.yml'
     paths: 
       - 'k8s_deployment/**'
+      - '**/workflows/k8s_deploy.yml'
     branches: [ master ]
 jobs:
   deploy:
