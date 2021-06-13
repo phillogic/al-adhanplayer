@@ -2,12 +2,14 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: aldhan test and build docker image
+name: docker_build.yml
 
 on:
   workflow_dispatch:
   push:
-    paths-ignore: '**/workflows/hacks/*.yml'
+    paths-ignore: 
+      - '**/workflows/hacks/*.yml'
+      - '**/workflows/k8s/*.yml'
     branches: [ master ]
 jobs:
   test:
