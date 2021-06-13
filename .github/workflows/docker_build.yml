@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
   push:
     paths-ignore: 
-      - '**/workflows/hacks/*.yml'
-      - '**/workflows/k8s/*.yml'
+      - '**/workflows/manual.yml'
+      - '**/workflows/k8s_*.yml'
     branches: [ master ]
 jobs:
   test:

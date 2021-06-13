@@ -1,8 +1,6 @@
-name: aldhan deploy docker image
-
+name: docker_deploy.yml
 on:
   workflow_dispatch:
-
 jobs:
   deploy:
      runs-on: self-hosted
