@@ -7,7 +7,7 @@ name: aldhan test and build docker image
 on:
   workflow_dispatch:
   push:
-    paths-ignore: '.github/workflows/hacks/*.yml'
+    paths-ignore: '**/workflows/hacks/*.yml'
     branches: [ master ]
   pull_request:
     branches: [ master ]
