@@ -3,8 +3,6 @@ name: k8s_deploy.yml
 on:
   workflow_dispatch:
   push:
-    paths-ignore: 
-      - '**/workflows/manual.yml'
     paths: 
       - 'k8s_deployment/**'
       - '**/workflows/k8s_deploy.yml'
