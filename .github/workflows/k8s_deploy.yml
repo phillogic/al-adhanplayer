@@ -19,8 +19,10 @@ jobs:
         ls -lh
         touch kubeconfig
         echo "${{ secrets.KUBECONFIG }}" > kubeconfig
-        export KUBECONFIG="kubeconfig"
+
         
      - name: kubectl command 
        run: |
+        ls -lh
+        export KUBECONFIG="kubeconfig"
         kubectl get pods -A -o wide
