@@ -24,9 +24,14 @@ jobs:
         touch kubeconfig
         echo "${{ secrets.KUBECONFIG }}" > kubeconfig
 
-        
      - name: kubectl apply 
        run: |
         ls -lh
         export KUBECONFIG="kubeconfig"
         kubectl apply -f k8s_deployment/deployment.yaml
+
+     - name: clean up old docker images
+       run: | 
+        sudo docker images
+        sudo docker system prune -a -f
+        sudo docker images
