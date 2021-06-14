@@ -15,6 +15,6 @@ jobs:
      
      - name: kubectl commands 
        run: |
-        echo ${{ secrets.KUBECONFIG }} >> kubeconfig
+        echo ${{ secrets.KUBECONFIG }} > kubeconfig
         export KUBECONFIG="kubeconfig" 
         kubectl get nodes -A
