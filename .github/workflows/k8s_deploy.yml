@@ -1,6 +1,10 @@
 name: k8s_deploy.yml
 
 on:
+  workflow_run:
+    workflows: ["dokcer_build.yml"]
+    types: 
+      - completed
   workflow_dispatch:
   push:
     paths: 
