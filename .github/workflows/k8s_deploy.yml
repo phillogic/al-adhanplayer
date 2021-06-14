@@ -13,12 +13,14 @@ jobs:
      steps:
      - uses: actions/checkout@v2
      
-     - name: kubectl commands 
+     - name: setup kubectl 
        run: |
         pwd
         ls -lh
         touch kubeconfig
         echo "${{ secrets.KUBECONFIG }}" > kubeconfig
-        export KUBECONFIG="kubeconfig" 
-        ls -lh
-        kubectl get nodes -A
+        export KUBECONFIG="kubeconfig"
+        
+     - name: kubectl command 
+       run: |
+        kubectl get pods -A -o wide
