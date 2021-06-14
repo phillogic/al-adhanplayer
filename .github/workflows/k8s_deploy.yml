@@ -28,7 +28,7 @@ jobs:
        run: |
         ls -lh
         export KUBECONFIG="kubeconfig"
-        kubectl delete namespace adhanplayer
+        kubectl delete namespace adhanplayer || true
         kubectl apply -f k8s_deployment/deployment.yaml
 
      - name: clean up old docker images
