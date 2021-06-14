@@ -21,3 +21,4 @@ jobs:
         echo "${{ secrets.KUBECONFIG }}" > kubeconfig
         export KUBECONFIG="kubeconfig" 
         ls -lh
+        kubectl get nodes -A
