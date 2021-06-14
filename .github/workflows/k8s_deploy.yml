@@ -33,5 +33,5 @@ jobs:
      - name: clean up old docker images
        run: | 
         sudo docker images
-        sudo docker system prune -a -f
+        sudo docker system prune --filter until=10m -f
         sudo docker images
