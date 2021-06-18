@@ -81,9 +81,10 @@ def GetLatestPrayerTimes():
       return (ts, prayerTimings, pryayerAdhanPlayed)
 
 
-def setPrometheusTimeToPrayerGuages(prayer,minutesToPrayer):
+def setPrometheusTimeToPrayerGuages(prayer,minutesToPrayer,thisPrayerTime):
+
     if (prayer.lower() == "fajr"):
-        fajr_prayer_guage.set(minutesToPrayer)
+        fajr_prayer_guage.set(thisPrayerTime.timestamp())
     if (prayer.lower() == "dhuhr"):
         duhr_prayer_guage.set(minutesToPrayer)
     if (prayer.lower() == "asr"):
@@ -103,7 +104,7 @@ def calculateTimeToPrayer(pryayerTimes):
         prayerMinute = (int)(prayerTimes[prayer].split(':')[1])
         thisPrayerTime = datetime.datetime.combine(datetime.date.today(), datetime.time(prayerHour,prayerMinute))
         minutesToPrayer = ((thisPrayerTime - currentTime).total_seconds())/60.0
-        setPrometheusTimeToPrayerGuages(prayer,minutesToPrayer)
+        setPrometheusTimeToPrayerGuages(prayer,minutesToPrayer,thisPrayerTime)
         playerLogger.debug("calculateTimeToPrayer: " +  str(prayer) + " is at " + str(thisPrayerTime) + " time to prayer in mins: " + str(minutesToPrayer))
     return None
 ####
