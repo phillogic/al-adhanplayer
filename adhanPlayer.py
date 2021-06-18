@@ -15,11 +15,11 @@ playerLogger = adhanLogger.logging.getLogger(__file__)
 ## Grafana metric defintions ###
 GetLatestPrayerTimes_REQUEST_TIME = Summary('adhan_player_GetLatestPrayerTimes_processing_seconds', 'Time spent processing request for GetLatestPrayerTimes')
 loop_counter = Counter('adhan_player_loop_counter', 'Description of counter')
-fajr_prayer_guage = Gauge('minutes_to_fajr', 'Minutes left to fajr')
-duhr_prayer_guage = Gauge('minutes_to_duhr', 'Minutes left to duhr')
-asr_prayer_guage = Gauge('minutes_to_asr', 'Minutes left to asr')
-maghrib_prayer_guage = Gauge('minutes_to_maghrib', 'Minutes left to maghrib')
-isha_prayer_guage = Gauge('minutes_to_isha', 'Minutes left to isha')
+fajr_prayer_guage = Gauge('epoch_to_fajr', 'epoch time for  fajr')
+duhr_prayer_guage = Gauge('epoch_to_duhr', 'epoch time for  duhr')
+asr_prayer_guage = Gauge('epoch_to_asr', 'epoch time for  asr')
+maghrib_prayer_guage = Gauge('epoch_to_maghrib', 'epoch time for  maghrib')
+isha_prayer_guage = Gauge('epoch_to_isha', 'epoch time for  isha')
 
 def StripUnwantedFilesFromArray(filesArray):
     # removes any file starting with '.'
@@ -81,18 +81,18 @@ def GetLatestPrayerTimes():
       return (ts, prayerTimings, pryayerAdhanPlayed)
 
 
-def setPrometheusTimeToPrayerGuages(prayer,minutesToPrayer,thisPrayerTime):
+def setPrometheusTimeToPrayerGuages(prayer,thisPrayerTime):
 
     if (prayer.lower() == "fajr"):
         fajr_prayer_guage.set(thisPrayerTime.timestamp())
     if (prayer.lower() == "dhuhr"):
-        duhr_prayer_guage.set(minutesToPrayer)
+        duhr_prayer_guage.set(thisPrayerTime.timestamp())
     if (prayer.lower() == "asr"):
-        asr_prayer_guage.set(minutesToPrayer)
+        asr_prayer_guage.set(thisPrayerTime.timestamp())
     if (prayer.lower() == "maghrib"):
-        maghrib_prayer_guage.set(minutesToPrayer)
+        maghrib_prayer_guage.set(thisPrayerTime.timestamp())
     if (prayer.lower() == "isha"):
-        isha_prayer_guage.set(minutesToPrayer)
+        isha_prayer_guage.set(thisPrayerTime.timestamp())
 
 def calculateTimeToPrayer(pryayerTimes):
 
@@ -103,9 +103,8 @@ def calculateTimeToPrayer(pryayerTimes):
         prayerHour = (int)(prayerTimes[prayer].split(':')[0])
         prayerMinute = (int)(prayerTimes[prayer].split(':')[1])
         thisPrayerTime = datetime.datetime.combine(datetime.date.today(), datetime.time(prayerHour,prayerMinute))
-        minutesToPrayer = ((thisPrayerTime - currentTime).total_seconds())/60.0
-        setPrometheusTimeToPrayerGuages(prayer,minutesToPrayer,thisPrayerTime)
-        playerLogger.debug("calculateTimeToPrayer: " +  str(prayer) + " is at " + str(thisPrayerTime) + " time to prayer in mins: " + str(minutesToPrayer))
+        setPrometheusTimeToPrayerGuages(prayer,thisPrayerTime)
+        playerLogger.debug("calculateTimeToPrayer: " +  str(prayer) + " is at " + str(thisPrayerTime) )
     return None
 ####
 timestamp = None
