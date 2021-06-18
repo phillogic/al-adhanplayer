@@ -2,7 +2,7 @@ name: k8s_deploy.yml
 
 on:
   workflow_run:
-    workflows: ["dokcer_build.yml"]
+    workflows: ["docker_build.yml"]
     types: 
       - completed
   workflow_dispatch:
@@ -24,9 +24,15 @@ jobs:
         touch kubeconfig
         echo "${{ secrets.KUBECONFIG }}" > kubeconfig
 
-        
      - name: kubectl apply 
        run: |
         ls -lh
         export KUBECONFIG="kubeconfig"
+        kubectl delete namespace adhanplayer || true
         kubectl apply -f k8s_deployment/deployment.yaml
+
+     - name: clean up old docker images
+       run: | 
+        sudo docker images
+        sudo docker system prune --filter until=10m -f
+        sudo docker images
