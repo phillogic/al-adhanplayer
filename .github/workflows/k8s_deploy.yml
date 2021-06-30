@@ -30,9 +30,3 @@ jobs:
         export KUBECONFIG="kubeconfig"
         kubectl delete namespace adhanplayer || true
         kubectl apply -f k8s_deployment/deployment.yaml
-
-     - name: clean up old docker images
-       run: | 
-        sudo docker images
-        sudo docker system prune --filter until=10m -f
-        sudo docker images
