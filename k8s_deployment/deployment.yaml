@@ -20,7 +20,7 @@ spec:
       labels:
         app: adhanplayer
     spec:
-      nodeName: pi44gb
+      nodeName: pi3
       containers:
       - name: adhanplayer
         image: phillogic/adhanplayer:latest
