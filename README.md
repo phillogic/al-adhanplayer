@@ -47,4 +47,51 @@ card 0: Headphones [bcm2835 Headphones], device 0: bcm2835 Headphones [bcm2835 H
 card 1: vc4hdmi [vc4-hdmi], device 0: MAI PCM vc4-hdmi-hifi-0 [MAI PCM vc4-hdmi-hifi-0]
   Subdevices: 1/1
   Subdevice #0: subdevice #0
-```                         
+```          
+
+Troubleshoot by running speaker-test to see if sound card is setup properly in the env
+
+```
+pi@pi3:~ $ speaker-test
+
+speaker-test 1.1.8
+
+Playback device is default
+Stream parameters are 48000Hz, S16_LE, 1 channels
+Using 16 octaves of pink noise
+Rate set to 48000Hz (requested 48000Hz)
+Buffer size range from 192 to 2097152
+Period size range from 64 to 699051
+Using max buffer size 2097152
+Periods = 4
+was set period_size = 524288
+was set buffer_size = 2097152
+ 0 - Front Left 
+ ```
+ 
+ ```
+ root@adhanplayer-8ccb6b4df-mwxzr:/adhanplayer# speaker-test
+
+speaker-test 1.1.3
+
+Playback device is default
+Stream parameters are 48000Hz, S16_LE, 1 channels
+Using 16 octaves of pink noise
+Rate set to 48000Hz (requested 48000Hz)
+Buffer size range from 512 to 65536
+Period size range from 512 to 65536
+Using max buffer size 65536
+Periods = 4
+was set period_size = 16384
+was set buffer_size = 65536
+ 0 - Front Left
+Time per period = 1.393386
+ 0 - Front Left
+Time per period = 2.728813
+ 0 - Front Left
+Time per period = 2.730527
+ 0 - Front Left
+ ```
+ 
+ 
+
