@@ -10,6 +10,7 @@ on:
     paths-ignore: 
       - '**/workflows/manual.yml'
       - '**/workflows/k8s_*.yml'
+      - 'README.*'
       - 'k8s_deployment/*.yml'
     branches: [ master ]
 jobs:
