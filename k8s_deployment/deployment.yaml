@@ -21,6 +21,7 @@ spec:
         app: adhanplayer
     spec:
       nodeName: pi3
+      hostNetwork: true
       containers:
       - name: adhanplayer
         image: phillogic/adhanplayer:latest
