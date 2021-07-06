@@ -64,5 +64,5 @@ jobs:
        with:
           tags: phillogic/adhanplayer:latest, phillogic/adhanplayer:${{github.run_number}}
           push: true
-          platforms: linux/arm64
+          platforms: linux/arm64, linux/arm/v7
  
