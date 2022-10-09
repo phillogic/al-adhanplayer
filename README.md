@@ -20,6 +20,9 @@ use the awesome: https://github.com/alexellis/k3sup
 * Update config file to point to correct master node ip address or hostname
 * confirm with kubectl on workstation
 
+# Troubleshoot adhanplayer pod
+Log into the adhanplayer pod  as follows :
+` kubectl exec --stdin --tty adhanplayer-597b7cdd77-gszhc -n adhanplayer -- /bin/bash`
 # Docker sound problems
 for a list of devices
 ```
