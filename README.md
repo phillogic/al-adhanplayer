@@ -16,7 +16,8 @@ use the awesome: https://github.com/alexellis/k3sup
 
 ## Reconnecting into an existing K3s/k3sup setup if the workstation is delte
 * Get the k3s.yaml file from the master node. This would be in the /etc/rancher/k3s folder
-* rename this file to kubeconfig on the workstation and update ips as required.
+* copyt this file as "config" into $HOME/.kube folder
+* Update config file to point to correct master node ip address or hostname
 * confirm with kubectl on workstation
 
 # Docker sound problems
