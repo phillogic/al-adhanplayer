@@ -8,6 +8,13 @@ Atm. the code is checking only for sydney AEST, but it could be extended to dyna
 
 This code is being used on raspberry pi to make it work like an adhan player.
 
+# Pre-Reqs
+A Raspberry pi node cluster with networking
+ensure ssh keys are configured for use across pi cluster
+Need to setup k3s on the pi cluster.
+use the awesome: https://github.com/alexellis/k3sup
+
+
 # Docker sound problems
 for a list of devices
 ```
