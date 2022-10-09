@@ -14,6 +14,10 @@ ensure ssh keys are configured for use across pi cluster
 Need to setup k3s on the pi cluster.
 use the awesome: https://github.com/alexellis/k3sup
 
+## Reconnecting into an existing K3s/k3sup setup if the workstation is delte
+* Get the k3s.yaml file from the master node. This would be in the /etc/rancher/k3s folder
+* rename this file to kubeconfig on the workstation and update ips as required.
+* confirm with kubectl on workstation
 
 # Docker sound problems
 for a list of devices
