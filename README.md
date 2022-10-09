@@ -23,6 +23,14 @@ use the awesome: https://github.com/alexellis/k3sup
 # Troubleshoot adhanplayer pod
 Log into the adhanplayer pod  as follows :
 ` kubectl exec --stdin --tty adhanplayer-597b7cdd77-gszhc -n adhanplayer -- /bin/bash`
+
+# text 2 speech
+install speak and then use via :
+* `espeak -s120 -ven+m3 --stdout "Uss Sallam A laikum. This is Fujjirr time" | aplay`
+* `espeak -s120 -ven+m3 --stdout "Uss Sallam A laikum. This is zo-hur time" | aplay`
+* `espeak -s120 -ven+m3 --stdout "Uss Sallam A laikum. This is Us ur time" | aplay`
+* `espeak -s120 -ven+m3 --stdout "Uss Sallam A laikum. This is Mag rib time" | aplay`
+* `espeak -s120 -ven+m3 --stdout "Uss Sallam A laikum. This is Isha time" | aplay`
 # Docker sound problems
 for a list of devices
 ```
