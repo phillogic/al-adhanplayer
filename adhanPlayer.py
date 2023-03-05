@@ -39,7 +39,7 @@ def GetRandomIndexForMusicFile(filesArray):
 
 def GetAdhanFile(prayer):
       fileName = ""
-      if prayer == "Fajr":
+      if prayer.lower() == "fajr":
          for root, dirs, files in os.walk('media/fajr', topdown=True):
                 fileName = GetRandomIndexForMusicFile(files)
                 playerLogger.info("GetAdhanFile:Getting fajr adhan: {}".format(fileName))
@@ -64,12 +64,13 @@ def GetLatestPrayerTimes():
             r = requests.get('http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1')
             dataset = r.json()
             playerLogger.debug("GetLatestPrayerTimes: response received : {} ".format(r.json()))
-            prayerTimings = dataset["data"]["timings"]
+            apiPrayerTimings = dataset["data"]["timings"]
+            prayerTimings = {}
             # removing renudant timings
-            prayerTimings.pop('Midnight', None)
-            prayerTimings.pop('Sunset', None)
-            prayerTimings.pop('Sunrise', None)
-            prayerTimings.pop('Imsak', None)
+            for prayer in apiPrayerTimings:
+                if (isOneOfFiveDailyPrayers(prayer)):
+                    prayerTimings[prayer] = apiPrayerTimings[prayer]
+
             print(prayerTimings)
             pryayerAdhanPlayed = {}
             for p in prayerTimings:
@@ -80,6 +81,11 @@ def GetLatestPrayerTimes():
           playerLogger.error("GetLatestPrayerTimes: Error with getting  request http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1: {}".format(err))    
       return (ts, prayerTimings, pryayerAdhanPlayed)
 
+
+def isOneOfFiveDailyPrayers(prayerName):
+     if prayerName.lower() in ("fajr", "dhuhr","asr", "maghrib","isha"):
+          return True
+     return False
 
 def setPrometheusTimeToPrayerGuages(prayer,thisPrayerTime):
 
