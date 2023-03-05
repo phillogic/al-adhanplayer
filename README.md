@@ -117,4 +117,7 @@ Time per period = 2.730527
  ```
  
  
+ # Github actions: k8s_deployment
+ Ensure that you have the corrct kubeconfig in the secrest of the repo
+ 
 

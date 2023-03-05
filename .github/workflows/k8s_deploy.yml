@@ -29,3 +29,9 @@ jobs:
         ls -lh
         export KUBECONFIG="kubeconfig"
         kubectl apply -f k8s_deployment/deployment.yaml
+
+     - name: kubectl re-start pods 
+       run: |
+        ls -lh
+        export KUBECONFIG="kubeconfig"
+        kubectl delete pods --all -n adhanplayer --force
