@@ -32,6 +32,7 @@ jobs:
 
      - name: kubectl re-start pods 
        run: |
-        ls -lh
         export KUBECONFIG="kubeconfig"
+        kubectl get pods -n adhanplayer
         kubectl delete pods --all -n adhanplayer --force
+        kubectl get pods -n adhanplayer
