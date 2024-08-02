@@ -20,7 +20,7 @@ RUN echo "defaults.ctl.card 0" >> /etc/asound.conf
 RUN pip3 install -r requirements.txt
 
 # Create the white noise script
-RUN echo '#!/bin/bash\nplay -n synth 1 whitenoise vol 0.01' > /adhanplayer/play_white_noise.sh && \
+RUN echo '#!/bin/bash\nplay -n synth 2 whitenoise vol 0.01' > /adhanplayer/play_white_noise.sh && \
     chmod +x /adhanplayer/play_white_noise.sh
 
 # Add the cron job
