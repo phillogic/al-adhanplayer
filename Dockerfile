@@ -18,4 +18,15 @@ RUN apt-get install -y espeak
 RUN echo "defaults.pcm.card 0" > /etc/asound.conf
 RUN echo "defaults.ctl.card 0" >> /etc/asound.conf
 RUN pip3 install -r requirements.txt
-CMD ["python3" , "./adhanPlayer.py"]
+
+# Create the white noise script
+RUN echo '#!/bin/bash\nplay -n synth 1 whitenoise vol 0.01' > /adhanplayer/play_white_noise.sh && \
+    chmod +x /adhanplayer/play_white_noise.sh
+
+# Add the cron job
+RUN echo '* * * * * /adhanplayer/play_white_noise.sh' > /etc/cron.d/play_white_noise && \
+    chmod 0644 /etc/cron.d/play_white_noise && \
+    crontab /etc/cron.d/play_white_noise
+
+# Ensure cron is started when the container starts
+CMD ["sh", "-c", "cron && python3 ./adhanPlayer.py"]

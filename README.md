@@ -24,6 +24,11 @@ use the awesome: https://github.com/alexellis/k3sup
 Log into the adhanplayer pod  as follows :
 ` kubectl exec --stdin --tty adhanplayer-597b7cdd77-gszhc -n adhanplayer -- /bin/bash`
 
+# white noise to keep blue tooth speaker alive
+
+Created a crontab to run the sox whiteoise sync as part of the docker container to keep the bluetooth speaker from shutting off.
+
+
 # text 2 speech
 install speak and then use via :
 * `espeak -s120 -ven+m3 --stdout "Uss Sallam A laikum. This is Fujjirr time" | aplay`

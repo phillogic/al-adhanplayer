@@ -1,3 +1,5 @@
 requests
 python-vlc
 prometheus_client
+cron
+sox
