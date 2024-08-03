@@ -1,5 +1,5 @@
 requests
 python-vlc
 prometheus_client
-numpy
+
 
