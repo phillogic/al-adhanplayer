@@ -29,7 +29,7 @@ RUN pip3 install -r requirements.txt
 
 
 # Create the white noise script
-RUN echo '#!/bin/bash\nplay -n synth 5 whitenoise vol 0.02' > /adhanplayer/play_white_noise.sh
+RUN echo '#!/bin/bash\nplay -n synth 2 whitenoise vol 0.05' > /adhanplayer/play_white_noise.sh
 RUN chmod +x /adhanplayer/play_white_noise.sh
 
 # Add the cron job
