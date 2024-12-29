@@ -56,12 +56,13 @@ def GetAdhanFile(prayer):
 
 @GetLatestPrayerTimes_REQUEST_TIME.time()
 def GetLatestPrayerTimes():
-      playerLogger.debug("GetLatestPrayerTimes: making request http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1")
+      today_date = datetime.datetime.now().strftime("%d-%m-%Y")
+      playerLogger.debug(f"GetLatestPrayerTimes: making request http://api.aladhan.com/v1/timingsByCity/{today_date}?city=Sydney&country=AU&method=1")
       ts =None
       prayerTimings=None
       pryayerAdhanPlayed = {}
       try:
-            r = requests.get('http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1')
+            r = requests.get(f'http://api.aladhan.com/v1/timingsByCity/{today_date}?city=Sydney&country=AU&method=1')
             dataset = r.json()
             playerLogger.debug("GetLatestPrayerTimes: response received : {} ".format(r.json()))
             apiPrayerTimings = dataset["data"]["timings"]
@@ -78,7 +79,7 @@ def GetLatestPrayerTimes():
 
             ts = datetime.datetime.fromtimestamp(int(dataset["data"]["date"]["timestamp"]))
       except Exception as err:
-          playerLogger.error("GetLatestPrayerTimes: Error with getting  request http://api.aladhan.com/timingsByCity?city=Sydney&country=AU&method=1: {}".format(err))    
+          playerLogger.error(f"GetLatestPrayerTimes: Error with request http://api.aladhan.com/v1/timingsByCity/{today_date}?city=Sydney&country=AU&method=1: \n {err}")    
       return (ts, prayerTimings, pryayerAdhanPlayed)
 
 
