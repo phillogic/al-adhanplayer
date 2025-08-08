@@ -101,21 +101,33 @@ def setPrometheusTimeToPrayerGuages(prayer,thisPrayerTime):
     if (prayer.lower() == "isha"):
         isha_prayer_guage.set(thisPrayerTime.timestamp())
 
-def calculateTimeToPrayer(pryayerTimes):
+def calculateTimeToPrayer(prayerTimes):
+    """Update Prometheus gauges with the provided prayer times.
+
+    Args:
+        prayerTimes (dict): Mapping of prayer names to time strings in
+            HH:MM format.
+    """
 
     playerLogger.info("calculateTimeToPrayer: Starting")
     currentTime = datetime.datetime.now()
-    
+
     for prayer in prayerTimes:
-        prayerHour = (int)(prayerTimes[prayer].split(':')[0])
-        prayerMinute = (int)(prayerTimes[prayer].split(':')[1])
-        thisPrayerTime = datetime.datetime.combine(datetime.date.today(), datetime.time(prayerHour,prayerMinute))
-        setPrometheusTimeToPrayerGuages(prayer,thisPrayerTime)
-        playerLogger.debug("calculateTimeToPrayer: " +  str(prayer) + " is at " + str(thisPrayerTime) )
+        prayerHour = int(prayerTimes[prayer].split(':')[0])
+        prayerMinute = int(prayerTimes[prayer].split(':')[1])
+        thisPrayerTime = datetime.datetime.combine(
+            datetime.date.today(), datetime.time(prayerHour, prayerMinute)
+        )
+        setPrometheusTimeToPrayerGuages(prayer, thisPrayerTime)
+        playerLogger.debug(
+            "calculateTimeToPrayer: " + str(prayer) + " is at " + str(thisPrayerTime)
+        )
     return None
+
+
 ####
 timestamp = None
-pryayerTimes = None
+prayerTimes = None
 adhanPlayed = {}
 
 
