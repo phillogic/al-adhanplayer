@@ -150,8 +150,8 @@ if __name__ == '__main__':
                                             playerLogger.info("main:Playing adhan file {} for prayer {}".format(fileName, prayer))
                                             vlcplayer = vlc.MediaPlayer(fileName)
                                             vlcplayer.play()
-                                            while vlcplayer.is_playing == True:
-                                                continue
+                                            while vlcplayer.is_playing():
+                                                time.sleep(0.1)
                                             pass
                                     except Exception as err:
                                         playerLogger.error("main: error in playing file {}".format(err))
