@@ -4,14 +4,17 @@ import sys
 import datetime
 import adhanPlayer
 class TestAdhanPlayerMethods(unittest.TestCase):
-    
+
     def test_GetAdhanFile(self):
-       fajr =  adhanPlayer.GetAdhanFile("Fajr")
-       #print fajr
-       self.assertIsNotNone(fajr)
-       asr =  adhanPlayer.GetAdhanFile("Asr")
-       #print asr
-       self.assertIsNotNone(asr)
+        fajr = adhanPlayer.GetAdhanFile("Fajr")
+        self.assertIsNotNone(fajr)
+        self.assertTrue(os.path.exists(fajr))
+        self.assertTrue(fajr.endswith(".mp3"))
+
+        asr = adhanPlayer.GetAdhanFile("Asr")
+        self.assertIsNotNone(asr)
+        self.assertTrue(os.path.exists(asr))
+        self.assertTrue(asr.endswith(".mp3"))
 
     def test_StripUnwantedFilesFromArray_In_MediaFolder(self):
         
@@ -21,6 +24,7 @@ class TestAdhanPlayerMethods(unittest.TestCase):
             fArray = adhanPlayer.StripUnwantedFilesFromArray(files)
             for f in fArray:
                 self.assertNotEqual(f[0], '.')
+
 
     def test_calculateTimeToPrayer_uses_passed_prayer_times(self):
         """calculateTimeToPrayer should rely on its argument, not global state."""
@@ -36,6 +40,7 @@ class TestAdhanPlayerMethods(unittest.TestCase):
             datetime.date.today(), datetime.time(5, 0)
         ).timestamp()
         self.assertEqual(adhanPlayer.fajr_prayer_guage._value.get(), expected)
+
 
 if __name__ == '__main__':
     unittest.main()
