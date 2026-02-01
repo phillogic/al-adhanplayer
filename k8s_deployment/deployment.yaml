@@ -29,6 +29,11 @@ spec:
         env:
         - name: ROOT_PATH
           value: "/adhanplayer"
+        - name: MEDIA_DIR
+          value: "/adhanplayer/media"
+        volumeMounts:
+        - name: media
+          mountPath: /adhanplayer/media
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -49,6 +54,10 @@ spec:
         securityContext:
           allowPrivilegeEscalation: true
           privileged: true
+      volumes:
+      - name: media
+        persistentVolumeClaim:
+          claimName: adhanplayer-media
 ---
 
 apiVersion: v1

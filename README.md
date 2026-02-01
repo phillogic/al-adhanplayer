@@ -8,6 +8,155 @@ Atm. the code is checking only for sydney AEST, but it could be extended to dyna
 
 This code is being used on raspberry pi to make it work like an adhan player.
 
+## Version 2.0+ (FastAPI, k3s Ingress/Services)
+
+This branch migrates the API to FastAPI and adds a k3s Ingress/Service layout.
+
+Highlights:
+- Server: FastAPI + Uvicorn (Swagger at `/docs`).
+- Path prefix: honors `ROOT_PATH=/adhanplayer` for Traefik subpath.
+- Internal access: ClusterIP `Service/adhanplayer` on port 8000 for in-cluster clients (e.g., n8n).
+- External access: Traefik `Ingress` at `http://tinker/adhanplayer/...` with prefix stripping.
+
+FastAPI endpoints:
+- Health: `GET /health`, Ready: `GET /health/ready`, Metrics: `GET /metrics`.
+- Player: `GET /api/v1/player/status`, `POST /api/v1/player/preview?prayer=...`, `POST /api/v1/player/volume?level=...`, `POST /api/v1/player/mute`, `POST /api/v1/player/unmute`.
+- Prayer: `GET /api/v1/prayer/times`, `POST /api/v1/prayer/refresh`.
+
+Kubernetes manifests (see files under `k8s_deployment/`):
+- `deployment.yaml`: Namespace + Deployment (includes `ROOT_PATH` and `MEDIA_DIR`).
+- `service.yaml`: ClusterIP `adhanplayer` on port 8000.
+- `middlewares.yaml`: Traefik middlewares for `/adhanplayer` path handling.
+- `ingress.yaml`: Traefik Ingress exposing `http://tinker/adhanplayer`.
+- `pvc.yaml`: PVC `adhanplayer-media` (local-path, node-annotated to `pi48gb`).
+
+Access patterns:
+- In-cluster (recommended for n8n): `http://adhanplayer.adhanplayer.svc.cluster.local:8000/...` (no prefix)
+- LAN via Traefik: `http://tinker/adhanplayer/...` (with prefix)
+
+Docker image (slim):
+- `Dockerfile.slim` uses `python:3.11-slim` with VLC runtime libs and ALSA.
+- CI builds arm64 images for Raspberry Pi 4.
+
+CI change summary:
+- `.github/workflows/docker_build.yml` uses `file: Dockerfile.slim` and builds `platforms: linux/arm64`.
+
+### Quickstart (k3s)
+
+Apply order
+- Create namespace: `kubectl create ns adhanplayer || true`
+- Service: `kubectl apply -f k8s_deployment/service.yaml`
+- Traefik middlewares: `kubectl apply -f k8s_deployment/middlewares.yaml`
+- Ingress: `kubectl apply -f k8s_deployment/ingress.yaml`
+- PVC: `kubectl apply -f k8s_deployment/pvc.yaml`
+- Deployment: `kubectl apply -f k8s_deployment/deployment.yaml`
+- Wait for pod: `kubectl rollout status deploy/adhanplayer -n adhanplayer`
+
+Seed media into PVC
+- Get pod: `POD=$(kubectl get po -n adhanplayer -l app=adhanplayer -o jsonpath='{.items[0].metadata.name}')`
+- Copy media: `kubectl cp media/. -n adhanplayer "$POD":/adhanplayer/media/`
+- Verify: `kubectl exec -n adhanplayer "$POD" -- ls -la /adhanplayer/media | head`
+
+Test
+- LAN: `curl http://tinker/adhanplayer/health`
+- In-cluster: `curl http://adhanplayer.adhanplayer.svc.cluster.local:8000/health`
+
+### Media on PVC (local-path)
+
+Use a PVC with the k3s local-path provisioner and copy your media into it. This keeps the image small and persists audio across rollouts.
+
+1) Create the PVC
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: adhanplayer-media
+  namespace: adhanplayer
+  annotations:
+    volume.kubernetes.io/selected-node: pi48gb
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # adjust as needed
+storageClassName: local-path
+```
+
+Apply it:
+
+```bash
+kubectl apply -f pvc.yaml   # or paste the YAML above into a file and apply
+```
+
+2) Mount PVC and rollout
+
+The Deployment in `k8s_deployment/deployment.yaml` already mounts the PVC at `/adhanplayer/media` and sets `MEDIA_DIR`. Roll it out:
+
+```bash
+kubectl apply -f k8s_deployment/deployment.yaml
+kubectl rollout status deploy/adhanplayer -n adhanplayer
+```
+
+3) Seed the media into the PVC (clear steps)
+
+From your workstation (repo root):
+
+```bash
+# wait for the pod to be Ready (PVC must be Bound)
+kubectl get pods -n adhanplayer
+
+# get the pod name
+POD=$(kubectl get po -n adhanplayer -l app=adhanplayer -o jsonpath='{.items[0].metadata.name}')
+
+# copy local media/ into the mounted PVC path inside the pod
+kubectl cp media/. -n adhanplayer "$POD":/adhanplayer/media/
+
+# verify files exist in the pod (PVC)
+kubectl exec -n adhanplayer "$POD" -- ls -la /adhanplayer/media | head
+```
+
+Notes:
+- Update media later by repeating `kubectl cp`, or use an initContainer/Job as described in `docs/MEDIA_PVC.md`.
+- Ensure your audio device is accessible in the pod (e.g., `--device /dev/snd` if running Docker directly; for k8s see node/device configuration).
+
+PVC binding with local-path
+- The default `local-path` StorageClass uses `volumeBindingMode: WaitForFirstConsumer`.
+- A PV will be created and bound only after a Pod that mounts the PVC is scheduled (apply the Deployment first).
+- This repository’s `k8s_deployment/pvc.yaml` already includes the node annotation targeting `pi48gb`:
+
+  `metadata.annotations.volume.kubernetes.io/selected-node: pi48gb`
+
+  Change `pi48gb` if your target node name differs.
+
+- If you created a PVC without that annotation and it remains Pending, you can add it via patch:
+
+```bash
+kubectl patch pvc adhanplayer-media -n adhanplayer \
+  -p '{"metadata":{"annotations":{"volume.kubernetes.io/selected-node":"pi48gb"}}}'
+```
+
+
+YAML files in `k8s_deployment/`
+- `deployment.yaml`: Namespace + Deployment (container config)
+- `service.yaml`: ClusterIP Service `adhanplayer` on port 8000
+- `middlewares.yaml`: Traefik middlewares for `/adhanplayer` path handling
+- `ingress.yaml`: Traefik Ingress exposing `http://tinker/adhanplayer`
+- `pvc.yaml`: PVC `adhanplayer-media` (local-path provisioner)
+
+Apply in order (manual):
+
+```bash
+kubectl apply -f k8s_deployment/service.yaml
+kubectl apply -f k8s_deployment/middlewares.yaml
+kubectl apply -f k8s_deployment/ingress.yaml
+kubectl apply -f k8s_deployment/pvc.yaml
+kubectl apply -f k8s_deployment/deployment.yaml
+```
+
+CI note: the current `k8s_deploy.yml` workflow applies only `deployment.yaml`. Apply the other YAMLs manually once, or update the workflow to apply them as well.
+
 # Pre-Reqs
 A Raspberry pi node cluster with networking
 ensure ssh keys are configured for use across pi cluster
@@ -125,4 +274,3 @@ Time per period = 2.730527
  # Github actions: k8s_deployment
  Ensure that you have the corrct kubeconfig in the secrest of the repo
  
-
