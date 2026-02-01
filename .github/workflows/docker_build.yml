@@ -62,7 +62,7 @@ jobs:
        run: |
          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
-         echo "BUILD_ID=${{ github.run_number }}-$SHORT_SHA" >> $GITHUB_OUTPUT
+         echo "BUILD_ID=v2.0.${{ github.run_number }}-$SHORT_SHA" >> $GITHUB_OUTPUT
 
      - name: Build and push Docker images
        uses: docker/build-push-action@v5
