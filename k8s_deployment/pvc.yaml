@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: adhanplayer-media
+  namespace: adhanplayer
+  annotations:
+    volume.kubernetes.io/selected-node: pi48gb
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-path

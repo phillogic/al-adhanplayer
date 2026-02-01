@@ -1,6 +1,8 @@
 FROM ubuntu:22.04
 
 ENV TZ=Australia/Sydney
+ARG BUILD_ID=unknown
+ENV BUILD_ID=${BUILD_ID}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir /adhanplayer
 WORKDIR /adhanplayer
@@ -8,6 +10,7 @@ COPY requirements.txt /adhanplayer
 COPY adhanPlayer.py /adhanplayer
 ADD utils /adhanplayer/utils
 ADD media /adhanplayer/media
+ADD app /adhanplayer/app
 
 # Install necessary packages
 RUN apt-get update
@@ -37,5 +40,5 @@ RUN echo '* * * * * /adhanplayer/play_white_noise.sh' > /etc/cron.d/play_white_n
 RUN chmod 0644 /etc/cron.d/play_white_noise
 RUN crontab /etc/cron.d/play_white_noise
 
-# Ensure cron is started when the container starts
-CMD ["sh", "-c", "cron && python3 ./adhanPlayer.py"]
+# Ensure cron is started and run FastAPI via uvicorn
+CMD ["sh", "-c", "cron && uvicorn app.main:app --host 0.0.0.0 --port 8000"]

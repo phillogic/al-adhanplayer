@@ -1,0 +1,53 @@
+FROM python:3.11-slim AS base
+
+# Environment
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TZ=Australia/Sydney
+
+WORKDIR /adhanplayer
+
+# Build metadata (keeps compatibility with existing CI)
+ARG BUILD_ID=unknown
+ENV BUILD_ID=${BUILD_ID}
+
+# System deps: minimal VLC runtime + ALSA; avoid full GUI VLC
+# - libvlc5/libvlccore provide the engine used by python-vlc
+# - vlc-plugin-base provides common codecs (incl. MP3)
+# - libasound2/alsa-utils for audio device control
+# - sox + cron are optional; keep if you need the white-noise keepalive
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates \
+       tzdata \
+       libvlc5 libvlccore9 vlc-plugin-base \
+       libasound2 alsa-utils \
+       sox cron \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python deps
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# App code
+COPY adhanPlayer.py ./
+COPY app ./app
+COPY utils ./utils
+
+# Media: to minimize image size, prefer mounting via a PVC at runtime.
+# Uncomment the next line only if you intentionally want media baked into the image.
+# COPY media ./media
+
+# ALSA defaults
+RUN echo "defaults.pcm.card 0" > /etc/asound.conf \
+ && echo "defaults.ctl.card 0" >> /etc/asound.conf
+
+# Optional: white noise cron to keep audio device awake
+RUN printf '#!/bin/sh\nplay -n synth 2 whitenoise vol 0.05\n' > /usr/local/bin/play_white_noise.sh \
+ && chmod +x /usr/local/bin/play_white_noise.sh \
+ && printf '* * * * * /usr/local/bin/play_white_noise.sh\n' > /etc/cron.d/play_white_noise \
+ && chmod 0644 /etc/cron.d/play_white_noise \
+ && crontab /etc/cron.d/play_white_noise
+
+# Entrypoint: start cron then the API
+CMD ["sh", "-c", "cron && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
