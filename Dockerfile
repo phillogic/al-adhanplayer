@@ -1,6 +1,8 @@
 FROM ubuntu:22.04
 
 ENV TZ=Australia/Sydney
+ARG BUILD_ID=unknown
+ENV BUILD_ID=${BUILD_ID}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN mkdir /adhanplayer
 WORKDIR /adhanplayer

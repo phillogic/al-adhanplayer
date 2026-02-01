@@ -39,7 +39,7 @@ jobs:
     - name: Test with pytest
       run: |
         export PYTHONPATH="$PYTHONPATH:."
-        python test/AdhanPlayerTest.py
+        pytest -q
   
   build:
      needs: test
@@ -60,10 +60,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PAT }}
       
+     - name: Derive build metadata
+       id: meta
+       run: |
+         SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+         echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+         echo "BUILD_ID=${{ github.run_number }}-$SHORT_SHA" >> $GITHUB_OUTPUT
+
      - name: Build and push Docker images
        uses: docker/build-push-action@v4.0.0
        with:
-          tags: phillogic/adhanplayer:latest, phillogic/adhanplayer:${{github.run_number}}
+          tags: |
+            phillogic/adhanplayer:latest
+            phillogic/adhanplayer:${{ github.run_number }}
+            phillogic/adhanplayer:${{ steps.meta.outputs.BUILD_ID }}
           push: true
           platforms: linux/arm/v7
+          build-args: |
+            BUILD_ID=${{ steps.meta.outputs.BUILD_ID }}
  
