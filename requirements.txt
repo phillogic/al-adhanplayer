@@ -1,5 +1,8 @@
 requests
 python-vlc
 prometheus_client
-
-
+fastapi==0.116.2
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+pytest
+httpx>=0.24.0
