@@ -48,7 +48,7 @@ jobs:
        
      - name: Docker Setup Buildx
        uses: docker/setup-buildx-action@v3
-      with:
+       with:
         install: true
 
      - name: Docker Login
