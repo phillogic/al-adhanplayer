@@ -61,6 +61,24 @@ Test
 - LAN: `curl http://tinker/adhanplayer/health`
 - In-cluster: `curl http://adhanplayer.adhanplayer.svc.cluster.local:8000/health`
 
+### Media management API
+
+Endpoints (all under `/api/v1/media`):
+- `GET /list`: list files/dirs under `MEDIA_DIR` (query: `path`, `recursive`, `include_hidden`).
+- `GET /stats`: summary counts/sizes (total and fajr subdir).
+- `GET /file`: file metadata by `rel_path`.
+- `GET /download`: download file by `rel_path`.
+- `POST /upload`: upload one or more files (multipart form `files`, optional `dest` relative folder).
+- `DELETE /file`: delete a file by `rel_path`.
+
+Examples:
+- List root: `curl -s http://tinker/adhanplayer/api/v1/media/list | jq .`
+- Upload: `curl -s -F "files=@media/a1.mp3" -F "files=@media/a2.mp3" "http://tinker/adhanplayer/api/v1/media/upload?dest=fajr" | jq .`
+- Download: `curl -L -o /tmp/a1.mp3 "http://tinker/adhanplayer/api/v1/media/download?rel_path=a1.mp3"`
+- Delete: `curl -X DELETE "http://tinker/adhanplayer/api/v1/media/file?rel_path=a1.mp3"`
+
+Persistence: uploads and deletions modify `MEDIA_DIR` (`/adhanplayer/media`), which is mounted to the PVC, so changes persist across restarts.
+
 ### Media on PVC (local-path)
 
 Use a PVC with the k3s local-path provisioner and copy your media into it. This keeps the image small and persists audio across rollouts.

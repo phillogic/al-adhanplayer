@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.logging_config import get_logger
 from app.metrics.registry import metrics_router
 from app.routers import diagnostics, prayer as prayer_router, player as player_router
+from app.routers import media as media_router
 from app.services.prayer_service import PrayerService
 from app.services.player_service import PlayerService
 
@@ -75,6 +76,7 @@ app.include_router(diagnostics.router)
 app.include_router(prayer_router.router)
 app.include_router(player_router.router)
 app.include_router(metrics_router)
+app.include_router(media_router.router)
 
 
 if __name__ == "__main__":
