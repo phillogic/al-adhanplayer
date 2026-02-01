@@ -58,6 +58,8 @@ app = FastAPI(
     version=os.getenv("BUILD_ID", "2.0.0"),
     lifespan=lifespan,
     redirect_slashes=False,
+    # Allow running behind a path prefix (e.g. /adhanplayer) for Ingress
+    root_path=os.getenv("ROOT_PATH", ""),
 )
 
 app.add_middleware(
