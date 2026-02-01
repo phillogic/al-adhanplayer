@@ -10,7 +10,7 @@ This code is being used on raspberry pi to make it work like an adhan player.
 
 ## Version 2.0+ (FastAPI, k3s Ingress/Services)
 
-This branch migrates the API to FastAPI and adds a k3s Ingress/Service layout.
+This version migrates the API to FastAPI and adds a k3s Ingress/Service layout.
 
 Highlights:
 - Server: FastAPI + Uvicorn (Swagger at `/docs`).
