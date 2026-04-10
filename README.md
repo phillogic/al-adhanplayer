@@ -1,3 +1,4 @@
+
 # README #
 
 ### What is this repository for? ###
@@ -46,6 +47,7 @@ CI change summary:
 Apply order
 - Create namespace: `kubectl create ns adhanplayer || true`
 - Service: `kubectl apply -f k8s_deployment/service.yaml`
+- Setup Sound card/speaker `kubectl apply -f k8s_deployment/asound-configmap.yaml`
 - Traefik middlewares: `kubectl apply -f k8s_deployment/middlewares.yaml`
 - Ingress: `kubectl apply -f k8s_deployment/ingress.yaml`
 - PVC: `kubectl apply -f k8s_deployment/pvc.yaml`
@@ -167,6 +169,7 @@ Apply in order (manual):
 
 ```bash
 kubectl apply -f k8s_deployment/service.yaml
+kubectl apply -f k8s_deployment/asound-configmap.yaml
 kubectl apply -f k8s_deployment/middlewares.yaml
 kubectl apply -f k8s_deployment/ingress.yaml
 kubectl apply -f k8s_deployment/pvc.yaml
@@ -181,6 +184,25 @@ ensure ssh keys are configured for use across pi cluster
 Need to setup k3s on the pi cluster.
 use the awesome: https://github.com/alexellis/k3sup
 
+## ALSA / Audio (short)
+
+We expose the host ALSA devices to the pod and provide an `asound.conf` via a ConfigMap so the container uses the host USB speaker card. 
+
+Essential facts:
+- ConfigMap key `asound.conf` -> mounted file `asound.conf` inside the ConfigMap volume.
+- Deployment mounts that file into the container at `/etc/asound.conf` using `subPath`.
+- Because `subPath` is used, updating the ConfigMap requires restarting the pod to pick up changes.
+
+
+Quick verification (inside the pod):
+
+```bash
+POD=$(kubectl -n adhanplayer get pod -l app=adhanplayer -o jsonpath='{.items[0].metadata.name}')
+kubectl -n adhanplayer exec -it $POD -- aplay -l
+kubectl -n adhanplayer exec -it $POD -- cat /etc/asound.conf
+```
+
+
 ## Reconnecting into an existing K3s/k3sup setup if the workstation is delte
 * Get the k3s.yaml file from the master node. This would be in the /etc/rancher/k3s folder
 * copy this file as "config" into $HOME/.kube folder
@@ -190,6 +212,9 @@ use the awesome: https://github.com/alexellis/k3sup
 # Troubleshoot adhanplayer pod
 Log into the adhanplayer pod  as follows :
 ` kubectl exec --stdin --tty adhanplayer-597b7cdd77-gszhc -n adhanplayer -- /bin/bash`
+
+
+
 
 # white noise to keep blue tooth speaker alive
 
