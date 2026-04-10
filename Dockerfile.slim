@@ -38,9 +38,9 @@ COPY utils ./utils
 # Uncomment the next line only if you intentionally want media baked into the image.
 # COPY media ./media
 
-# ALSA defaults
-RUN echo "defaults.pcm.card 0" > /etc/asound.conf \
- && echo "defaults.ctl.card 0" >> /etc/asound.conf
+# ALSA defaults to usb speaker now
+RUN echo "defaults.pcm.card 3" > /etc/asound.conf \
+ && echo "defaults.ctl.card 3" >> /etc/asound.conf
 
 # Optional: white noise cron to keep audio device awake
 RUN printf '#!/bin/sh\nplay -n synth 2 whitenoise vol 0.05\n' > /usr/local/bin/play_white_noise.sh \

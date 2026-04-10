@@ -180,7 +180,13 @@ A Raspberry pi node cluster with networking
 ensure ssh keys are configured for use across pi cluster
 Need to setup k3s on the pi cluster.
 use the awesome: https://github.com/alexellis/k3sup
-
+## ALSA Audio and speakers
+In this version we have a usb speaker hooked up to the pihost which shows up as device 3. This configuration is passed to the pod via the docker file changes
+```
+# ALSA defaults to usb speaker now
+RUN echo "defaults.pcm.card 3" > /etc/asound.conf \
+ && echo "defaults.ctl.card 3" >> /etc/asound.conf
+ ```
 ## Reconnecting into an existing K3s/k3sup setup if the workstation is delte
 * Get the k3s.yaml file from the master node. This would be in the /etc/rancher/k3s folder
 * copy this file as "config" into $HOME/.kube folder
