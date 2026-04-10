@@ -43,11 +43,11 @@ RUN echo "defaults.pcm.card 3" > /etc/asound.conf \
  && echo "defaults.ctl.card 3" >> /etc/asound.conf
 
 # Optional: white noise cron to keep audio device awake
-RUN printf '#!/bin/sh\nplay -n synth 2 whitenoise vol 0.05\n' > /usr/local/bin/play_white_noise.sh \
- && chmod +x /usr/local/bin/play_white_noise.sh \
- && printf '* * * * * /usr/local/bin/play_white_noise.sh\n' > /etc/cron.d/play_white_noise \
- && chmod 0644 /etc/cron.d/play_white_noise \
- && crontab /etc/cron.d/play_white_noise
+#RUN printf '#!/bin/sh\nplay -n synth 2 whitenoise vol 0.05\n' > /usr/local/bin/play_white_noise.sh \
+# && chmod +x /usr/local/bin/play_white_noise.sh \
+# && printf '* * * * * /usr/local/bin/play_white_noise.sh\n' > /etc/cron.d/play_white_noise \
+# && chmod 0644 /etc/cron.d/play_white_noise \
+# && crontab /etc/cron.d/play_white_noise
 
 # Entrypoint: start cron then the API
 CMD ["sh", "-c", "cron && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
