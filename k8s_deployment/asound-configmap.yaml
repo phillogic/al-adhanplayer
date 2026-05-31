@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: asound-conf
+  namespace: adhanplayer
+data:
+  asound.conf: |
+    # Set the default ALSA card to the USB audio device
+    # Change the card number if your USB speaker moves to a different index
+    defaults.pcm.card 9
+    defaults.ctl.card 19

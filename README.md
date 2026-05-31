@@ -157,7 +157,8 @@ kubectl patch pvc adhanplayer-media -n adhanplayer \
 
 
 YAML files in `k8s_deployment/`
-- `deployment.yaml`: Namespace + Deployment (container config)
+- `asound-configmap.yaml`: ConfigMap with ALSA defaults (which audio card to use)
+- `deployment.yaml`: Namespace + Deployment (container config, mounts for snd and asound.conf)
 - `service.yaml`: ClusterIP Service `adhanplayer` on port 8000
 - `middlewares.yaml`: Traefik middlewares for `/adhanplayer` path handling
 - `ingress.yaml`: Traefik Ingress exposing `http://tinker/adhanplayer`
@@ -166,14 +167,15 @@ YAML files in `k8s_deployment/`
 Apply in order (manual):
 
 ```bash
+kubectl apply -f k8s_deployment/asound-configmap.yaml
+kubectl apply -f k8s_deployment/pvc.yaml
 kubectl apply -f k8s_deployment/service.yaml
 kubectl apply -f k8s_deployment/middlewares.yaml
 kubectl apply -f k8s_deployment/ingress.yaml
-kubectl apply -f k8s_deployment/pvc.yaml
 kubectl apply -f k8s_deployment/deployment.yaml
 ```
 
-CI note: the current `k8s_deploy.yml` workflow applies only `deployment.yaml`. Apply the other YAMLs manually once, or update the workflow to apply them as well.
+CI note: the current `k8s_deploy.yml` workflow applies only `deployment.yaml`. Apply the other YAMLs manually once, or update the workflow to apply all of them.
 
 # Pre-Reqs
 A Raspberry pi node cluster with networking
@@ -181,12 +183,43 @@ ensure ssh keys are configured for use across pi cluster
 Need to setup k3s on the pi cluster.
 use the awesome: https://github.com/alexellis/k3sup
 ## ALSA Audio and speakers
-In this version we have a usb speaker hooked up to the pihost which shows up as device 3. This configuration is passed to the pod via the docker file changes
-```
-# ALSA defaults to usb speaker now
-RUN echo "defaults.pcm.card 3" > /etc/asound.conf \
- && echo "defaults.ctl.card 3" >> /etc/asound.conf
- ```
+
+The USB speaker is configured via a Kubernetes ConfigMap (`k8s_deployment/asound-configmap.yaml`) which is mounted into the pod at `/etc/asound.conf`. This approach allows you to change the ALSA card index **without rebuilding the Docker image**.
+
+**Current configuration:**
+- Card index: 1 (the USB speaker on your Pi)
+
+**To change the ALSA card (e.g., if you add or replace the USB speaker):**
+
+1. First, identify the new card index on the Pi host:
+   ```bash
+   aplay -l
+   ```
+   Look for the line with your USB device (e.g., `card 2: UACDemoV1.0`).
+
+2. Update `k8s_deployment/asound-configmap.yaml` with the new card index:
+   ```yaml
+   data:
+     asound.conf: |
+       defaults.pcm.card 2
+       defaults.ctl.card 2
+   ```
+
+3. Apply the updated ConfigMap and restart the deployment:
+   ```bash
+   kubectl apply -f k8s_deployment/asound-configmap.yaml
+   kubectl -n adhanplayer rollout restart deployment/adhanplayer
+   ```
+
+4. Verify the change inside the pod:
+   ```bash
+   POD=$(kubectl -n adhanplayer get pod -l app=adhanplayer -o jsonpath='{.items[0].metadata.name}')
+   kubectl -n adhanplayer exec -it $POD -- cat /etc/asound.conf
+   kubectl -n adhanplayer exec -it $POD -- aplay -l
+   ```
+
+Note: Because the ConfigMap is mounted with `subPath`, the pod must be restarted for the file to update.
+
 ## Reconnecting into an existing K3s/k3sup setup if the workstation is delte
 * Get the k3s.yaml file from the master node. This would be in the /etc/rancher/k3s folder
 * copy this file as "config" into $HOME/.kube folder

@@ -34,6 +34,11 @@ spec:
         volumeMounts:
         - name: media
           mountPath: /adhanplayer/media
+        - name: snd
+          mountPath: /dev/snd
+        - name: asoundconf
+          mountPath: /etc/asound.conf
+          subPath: asound.conf
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -58,6 +63,16 @@ spec:
       - name: media
         persistentVolumeClaim:
           claimName: adhanplayer-media
+      - name: snd
+        hostPath:
+          path: /dev/snd
+          type: Directory
+      - name: asoundconf
+        configMap:
+          name: asound-conf
+          items:
+          - key: asound.conf
+            path: asound.conf
 ---
 
 apiVersion: v1
