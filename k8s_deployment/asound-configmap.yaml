@@ -7,5 +7,5 @@ data:
   asound.conf: |
     # Set the default ALSA card to the USB audio device
     # Change the card number if your USB speaker moves to a different index
-    defaults.pcm.card 9
-    defaults.ctl.card 19
+    defaults.pcm.card 1
+    defaults.ctl.card 1

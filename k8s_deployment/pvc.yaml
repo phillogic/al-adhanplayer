@@ -1,14 +1,7 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: adhanplayer-media
-  namespace: adhanplayer
-  annotations:
-    volume.kubernetes.io/selected-node: pi48gb
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: local-path
+# Media is now stored directly on the host via hostPath
+# No PVC needed - use hostPath volume instead
+# Ensure /media/adhanplayer exists on the pi48gb node:
+#   mkdir -p /media/adhanplayer
+#
+# To add media files via SCP:
+#   scp -r ~/Downloads/adhan.mp3 asim@pi48gb:/media/adhanplayer/
