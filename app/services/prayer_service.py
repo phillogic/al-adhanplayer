@@ -62,11 +62,12 @@ class PrayerService:
     def refresh_times(self) -> Tuple[Optional[datetime.datetime], Dict[str, str], Dict[str, bool]]:
         today_date = datetime.datetime.now().strftime('%d-%m-%Y')
         url = (
-            f"http://api.aladhan.com/v1/timingsByCity/{today_date}?city={self.city}&country={self.country}&method={self.method}"
+            f"https://api.aladhan.com/v1/timingsByCity/{today_date}?city={self.city}&country={self.country}&method={self.method}"
         )
         self.logger.debug(f"refresh_times: GET {url}")
         try:
-            r = requests.get(url)
+            r = requests.get(url, timeout=10)
+            r.raise_for_status()
             dataset = r.json()
             api_timings = dataset["data"]["timings"]
             filtered: Dict[str, str] = {
@@ -119,11 +120,13 @@ class PrayerService:
         now = datetime.datetime.now()
         with self._lock:
             ts = self.timestamp
-        if ts and ts.date() < now.date():
+        if not ts:
+            self.logger.debug("maybe_daily_refresh: no timestamp cached, refreshing")
+            self.refresh_times()
+        elif ts.date() < now.date():
             self.logger.debug("maybe_daily_refresh: timestamp expired, refreshing")
             self.refresh_times()
 
     def tick_metrics(self) -> None:
         loop_counter.inc()
         self.update_gauges()
-

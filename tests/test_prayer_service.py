@@ -9,6 +9,9 @@ class DummyResponse:
     def __init__(self, payload):
         self._payload = payload
 
+    def raise_for_status(self):
+        pass
+
     def json(self):
         return self._payload
 
@@ -31,7 +34,7 @@ def test_refresh_times_filters_and_sets(monkeypatch):
         }
     }
 
-    def fake_get(url):
+    def fake_get(url, timeout):
         return DummyResponse(payload)
 
     monkeypatch.setattr("app.services.prayer_service.requests.get", fake_get)
@@ -57,3 +60,53 @@ def test_check_and_due_prayers_window():
     due2 = svc.check_and_due_prayers(now)
     assert due2.get("Asr") is None
 
+
+def test_maybe_daily_refresh_retries_when_no_timestamp(monkeypatch):
+    svc = PrayerService()
+    calls = []
+
+    def fake_refresh():
+        calls.append(True)
+        return None, {}, {}
+
+    monkeypatch.setattr(svc, "refresh_times", fake_refresh)
+
+    svc.maybe_daily_refresh()
+
+    assert calls == [True]
+
+
+def test_refresh_times_uses_https_timeout_and_status_check(monkeypatch):
+    svc = PrayerService()
+
+    now = int(datetime.datetime.now().timestamp())
+    payload = {
+        "data": {
+            "date": {"timestamp": str(now)},
+            "timings": {
+                "Fajr": "05:01",
+                "Dhuhr": "12:30",
+                "Asr": "15:45",
+                "Maghrib": "18:02",
+                "Isha": "19:20",
+            },
+        }
+    }
+    seen = {}
+
+    class ResponseWithStatus(DummyResponse):
+        def raise_for_status(self):
+            seen["raise_for_status"] = True
+
+    def fake_get(url, timeout):
+        seen["url"] = url
+        seen["timeout"] = timeout
+        return ResponseWithStatus(payload)
+
+    monkeypatch.setattr("app.services.prayer_service.requests.get", fake_get)
+
+    svc.refresh_times()
+
+    assert seen["url"].startswith("https://api.aladhan.com/")
+    assert seen["timeout"] == 10
+    assert seen["raise_for_status"] is True
